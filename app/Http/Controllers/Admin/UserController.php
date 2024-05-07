@@ -9,13 +9,27 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
 
+    
         public function indexFerch(){
             $users = User::all();      
             return view('Admin.layout.master', ['users' => $users]);
         }
+
+        public function store(Request $request)
+        {
+            $name = $request->name;
+            $check = User::create([
+                'name' => $name,
+                'phone' => $request->phone,
+                'password' => $request->password,
+                'email' => $request->email,
+                'role'=>$request->role,
+            ]);
+            return redirect()->route('admin.index.accout')->with('msg', 'Them thanh cong');
+        }
         
         public function index(Request $request){
-            $users = User::query();
+            $users = User::query()->withTrashed();
 
             // Tìm kiếm theo tên người dùng
             $search = $request->input('search');
@@ -49,10 +63,10 @@ class UserController extends Controller
                 'email' => $request->email,
                 'password' => $request->password,
                 'phone' => $request->phone,
-                'role' => $request->role,
+                
             ]);
     
-            return redirect()->route('role.register');
+            return redirect()->route('admin.index.accout');
         }
     
         public function destroy(Request $request, $id){
@@ -61,9 +75,20 @@ class UserController extends Controller
     
             $msg = $check ? 'xoa thanh cong' : 'xoa that bai';
     
-            return redirect()->route('role.register')->with('msg', $msg);
+            return redirect()->route('admin.index.accout')->with('msg', $msg);
         }
-    
+        public function restore($id) {
+            $users = User::withTrashed()->find($id);
+            $users->restore();
+            return redirect()->route('admin.index.accout')->with('msg', 'Khôi phục dữ liệu thành công');
+        }
+          
+        public function forceDelete($id) {
+            $users = User::withTrashed()->find($id);
+            $users->forceDelete();
+            return redirect()->route('admin.index.accout')->with('msg', 'Xóa dữ liệu thành công');
+        }
+          
     
     
 }

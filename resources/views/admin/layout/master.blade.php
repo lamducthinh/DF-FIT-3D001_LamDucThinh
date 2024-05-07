@@ -24,7 +24,8 @@
 
     <!-- Custom styles for this template-->
     <link href="{{ asset('admin_public/distAdmin/css/sb-admin-2.min.css') }}" rel="stylesheet">
-
+    
+      
 </head>
 
 <body id="page-top">
@@ -114,8 +115,11 @@
                         <a class="collapse-item" href="{{route('shifts.create')}}">Sắp xếp ca làm việc</a>
                         @endif
                         <a class="collapse-item" href="{{route('shifts.index')}}">Ca làm</a>
+                        <a class="collapse-item" href="{{route('users.checkin')}}">Bảng Check-ins</a>
+                        <a class="collapse-item" href="{{route('users.checkout')}}">Bảng Check-outs</a>
+                        @if(!Auth::user()->isAdmin())
                         <a class="collapse-item" href="{{route('submit-feedback')}}">Ý kiến cá nhân</a>
-                       
+                        @endif
                     </div>
                 </div>
             </li>

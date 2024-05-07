@@ -14,10 +14,20 @@ use Illuminate\Support\Facades\DB;
 class ProductController extends Controller
 {
    
-    public function index()
+    public function index(Request $request)
     {
-        //Eloquent
-        $products = Product::with('productCategory')->withTrashed()->paginate(10);
+        $keyword = $request->keyword ?? "";
+        $keyword = '%'.$keyword.'%';
+
+        $sort = $request->sort ?? 'latest';
+        $direction = $sort === 'latest' ? "DESC" : "ASC";
+
+       
+        $products = Product::withTrashed()
+        ->where('name', 'like', $keyword)
+        ->orderBy('created_at', $direction)
+        ->paginate(env('PAGINATION_ITEM',10));
+        // $products = Product::with('productCategory')->withTrashed()->paginate(10);
 
         return view('admin.pages.product.index')->with('products', $products);
 

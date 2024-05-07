@@ -11,7 +11,8 @@ class Schedule extends Model
     use HasFactory, SoftDeletes;
     protected $table = 'schedules';
 
-    protected $fillable = ['user_id', 'shift_id', 'date'];
+    protected $fillable = ['user_id', 'shift_id', 'date', 'hours_worked'];
+
     protected $dates = ['deleted_at'];
 
     public function user()
@@ -23,4 +24,9 @@ class Schedule extends Model
     {
         return $this->belongsTo(Shift::class,'shift_id')->withTrashed();
     }
+    public function checkIns()
+    {
+        return $this->hasMany(CheckIn::class);
+    }
+   
 }

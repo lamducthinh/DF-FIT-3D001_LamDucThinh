@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CheckIn;
+use App\Models\CheckOut;
 use Illuminate\Http\Request;
 use App\Models\Schedule;
 use App\Models\Shift;
@@ -34,13 +36,18 @@ class ScheduleController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
-        
-        $query = Schedule::withTrashed();
+        $userId = auth()->user()->id;
+
+        if (auth()->user()->role == 1) {
+            $query = Schedule::with(['user', 'shift'])->withTrashed();
+        } else {
+            $query = Schedule::where('user_id', $userId)->with(['user', 'shift'])->withTrashed();
+        }
 
         if ($search) {
             $query->whereHas('user', function ($userQuery) use ($search) {
                 $userQuery->where('name', 'like', '%' . $search . '%')
-                ->orwhere('date', 'like', '%' . $search . '%');
+                    ->orWhere('date', 'like', '%' . $search . '%');
             });
         }
 
@@ -53,14 +60,68 @@ class ScheduleController extends Controller
         return view('admin.shifts.index', compact('schedules'));
     }
 
-    public function create(Request $request)
-    {      
-        $users = User::all();
-        $shifts = Shift::all();
-        return view('admin.shifts.create', compact('users', 'shifts'));
+   
+
+    
+    public function checkIn(Request $request)
+    {
+        // Lấy thông tin schedule_id từ yêu cầu POST
+        $scheduleId = $request->input('schedule_id');
+    
+        // Lưu thông tin Check-in vào cơ sở dữ liệu
+        CheckIn::create([
+            'user_id' => $request->user()->id,
+            'schedule_id' => $scheduleId,
+            'check_in_time' => now(),
+           
+        ]);
+    
+        // Trả về thông báo cho người dùng
+        return redirect()->back()->with('success', 'Check-in thành công.');
     }
+    public function checkOut(Request $request)
+    {
+        // Lấy thông tin schedule_id từ yêu cầu POST
+        $scheduleId = $request->input('schedule_id');
+    
+        // Lưu thông tin Check-in vào cơ sở dữ liệu
+        CheckOut::create([
+            'user_id' => $request->user()->id,
+            'schedule_id' => $scheduleId,
+            'check_out_time' => now(),
+           
+        ]);
+    
+        // Trả về thông báo cho người dùng
+        return redirect()->back()->with('success', 'Check-out thành công.');
+    }
+  
+
+    public function create(Request $request)
+    {
+    $search = $request->input('search');
+
+    $query = User::withTrashed(); // Optional: Include trashed users in search
+
+    if ($search) {
+        $query->whereHas('user', function ($userQuery) use ($search) {
+        $userQuery->where('name', 'like', '%' . $search . '%');
+        });
+    }
+
+    $users = $query->get(); 
+
+    $shifts = Shift::all();
+
+
+    $schedule = new Schedule();
+
+    return view('admin.shifts.create', compact('search', 'users', 'shifts', 'schedule'));
+    }
+
     public function store(Request $request)
     {
+        
         $twoMonthsLater = now()->addMonths(2)->format('Y-m-d');
 
         $data = $request->validate([
@@ -131,4 +192,52 @@ class ScheduleController extends Controller
         $product->forceDelete();
         return redirect()->route('shifts.index')->with('success', 'Xóa dữ liệu thành công');
     }
+  
+        
+    // public function checkInPagination(Request $request)
+    // {
+    //     $itemPerPage = 10; // Số mục trên mỗi trang
+    //     $totalItems = CheckIn::count(); // Đếm tổng số check-in
+    //     $totalPage = ceil($totalItems / $itemPerPage); // Tính tổng số trang
+    //     $page = $request->page ?? 1; // Trang hiện tại, mặc định là trang 1 nếu không có trang được chỉ định
+
+    //     $index = ($page - 1) * $itemPerPage; // Tính chỉ mục bắt đầu của các mục cho trang hiện tại
+
+    //     // Lấy danh sách check-in phân trang
+    //     $checkIns = CheckIn::offset($index)
+    //         ->limit($itemPerPage)
+    //         ->get();
+
+    //     return view('admin.checkins.index', [
+    //         'checkIns' => $checkIns,
+    //         'totalPage' => $totalPage,
+    //         'itemPerPage' => $itemPerPage,
+    //         'page' => $page
+    //     ]);
+    // }
+
+    // public function checkOutPagination(Request $request)
+    // {
+    //     $itemPerPage = 10; // Số mục trên mỗi trang
+    //     $totalItems = CheckOut::count(); // Đếm tổng số check-out
+    //     $totalPage = ceil($totalItems / $itemPerPage); // Tính tổng số trang
+    //     $page = $request->page ?? 1; // Trang hiện tại, mặc định là trang 1 nếu không có trang được chỉ định
+
+    //     $index = ($page - 1) * $itemPerPage; // Tính chỉ mục bắt đầu của các mục cho trang hiện tại
+
+    //     // Lấy danh sách check-out phân trang
+    //     $checkOuts = CheckOut::offset($index)
+    //         ->limit($itemPerPage)
+    //         ->get();
+
+    //     return view('admin.checkouts.index', [
+    //         'checkOuts' => $checkOuts,
+    //         'totalPage' => $totalPage,
+    //         'itemPerPage' => $itemPerPage,
+    //         'page' => $page
+    //     ]);
+    // }
+
+
+
 }

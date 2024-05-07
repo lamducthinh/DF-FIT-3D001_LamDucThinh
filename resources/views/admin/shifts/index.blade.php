@@ -1,8 +1,30 @@
-
 @extends('admin.layout.master')
 
-
 @section('content')
+<style>
+     .container {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .form-group {
+        margin-bottom: 0;
+    }
+
+    .btn {
+        margin-left: 10px;
+
+    }
+
+    .btn-primary {
+        background-color: #007bff; /* Màu nền của nút */
+        border: none; /* Loại bỏ viền */
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3; /* Màu nền của nút khi di chuột qua */
+    }
+</style>
     <h1 style="margin-left:20px">Danh sách lịch làm việc</h1>
 
     <form action="{{ route('shifts.index') }}" method="GET" class="mb-3" style="padding: 30px">
@@ -21,7 +43,11 @@
             </th>
         </div>
     </form>
-    
+    @if(session('success'))
+      <div class="alert alert-success">
+          {{ session('success') }}
+      </div>
+    @endif
     <table class="table">
         <thead>
             <tr>
@@ -40,7 +66,6 @@
         <tbody>
             @forelse($schedules as $index => $schedule)
                 <tr>
-                    {{-- {{dd($schedule)}} --}}
                     <td>{{$loop->iteration}}</td>
                     <td>{{ $schedule->user->name }}</td>
                     <td>{{ $schedule->shift->name }}</td>
@@ -84,4 +109,31 @@
         
         {{ $schedules->links() }}
       </div>
+
+    
+      <div class="container">
+        @if(!Auth::user()->isAdmin())
+            <form method="POST" action="{{ route('checkin') }}">
+                @csrf
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Check-in</button>
+                </div>
+            </form>
+            <form method="POST" action="{{ route('checkout') }}">
+                @csrf
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Check-out</button>
+                </div>
+            </form>
+        @endif
+    </div>
+    
+    
+@endsection
+@section('js-custom')
+  <script>
+    // $(document).ready(function(){
+    //   let table = new DataTable('#table-product-category');
+    // });
+  </script>
 @endsection

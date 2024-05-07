@@ -22,7 +22,7 @@ class ShiftSeeder extends Seeder
         Shift::create([
             'name' => 'Ca B',
             'start_time' => '16:00:00',
-            'end_time' => '00:00:00',
+            'end_time' => '24:00:00',
         ]);
     }
 }

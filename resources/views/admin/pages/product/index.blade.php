@@ -27,6 +27,35 @@
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title">Bảng nhân viên</h3>
+                                <form action="{{ route('admin.product.index') }}" method="GET">
+                                    <div class="row">
+                                      <div class="col-md-6">
+                                        <div class="form-group">
+                                          <label for="slug">Từ khóa bạn muốn tìm kiếm:</label>
+                                          <input value="{{ request()->get('keyword') }}" type="text" name="keyword" class="form-control" id="slug" placeholder="Enter keyword">
+                                        </div>
+                                      </div>
+                                      <div class="col-md-6">
+                                        <div class="form-group">
+                                          <label for="sortBy">Sắp xếp</label>
+                                          <select name="sort" class="form-control" id="sortBy">
+                                            <option value="">--- Chọn thuộc tính ---</option>
+                                            <option {{ request()->get('sort') === 'latest' ? 'selected' : '' }} value="latest">Trễ nhất</option>
+                                            <option {{ request()->get('sort') === 'oldest' ? 'selected' : '' }} value="oldest">Sớm nhất</option>
+                                          </select>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    
+                  
+                                    <div class="form-group">
+                                      <button type="submit" class="btn btn-primary">Search</button>
+                                      @if(Auth::user()->isAdmin())
+                                      <button class="btn btn-primary"> <a href="{{route('admin.product.create')}}" style="color: whitesmoke">Thêm thông tin nhân viên </a></button>
+                                      @endif
+                                    </div>
+                                    
+                                  </form>
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
@@ -44,7 +73,6 @@
                                                 
                                                 <th>Hình ảnh</th>
                                                 @if(Auth::user()->isAdmin())
-                                                <th>Deleted At</th>
                                                
 
                                                 <th>Thao tác</th>
@@ -66,9 +94,9 @@
                                                     
                                                     <td><img class="product__details__pic__item--large"
                                                             src="{{ asset('images').'/'.$product->image_url }}" alt=""
-                                                            style="width:100px"></td>
+                                                            style="width:80px"></td>
                                                     @if(Auth::user()->isAdmin())
-                                                    <td>{{ $product->deleted_at }}</td>
+                                                 
                                                     
 
                                                     <td style="width:350px">
@@ -96,6 +124,8 @@
                                                                   @csrf
                                                                   <button type="submit" class="btn btn-sm btn-warning">Xóa vĩnh viễn</button>
                                                               </form>
+                                                            @else
+                                                            <p>Hiện không có thao tác</p>
                                                           @endif
                                                           </td>
                                                       </div>

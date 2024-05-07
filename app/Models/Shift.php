@@ -16,4 +16,8 @@ class Shift extends Model
     public function schedules(){
         return $this->hasMany(Schedule::class,'shift_id')->withTrashed();
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

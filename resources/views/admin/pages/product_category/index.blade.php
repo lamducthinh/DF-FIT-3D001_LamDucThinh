@@ -32,17 +32,17 @@
                   <div class="row">
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label for="slug">Keyword</label>
+                        <label for="slug">Từ khóa bạn muốn tìm kiếm:</label>
                         <input value="{{ request()->get('keyword') }}" type="text" name="keyword" class="form-control" id="slug" placeholder="Enter keyword">
                       </div>
                     </div>
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label for="sortBy">Sort</label>
+                        <label for="sortBy">Sắp xếp</label>
                         <select name="sort" class="form-control" id="sortBy">
-                          <option value="">--- Please Select ---</option>
-                          <option {{ request()->get('sort') === 'latest' ? 'selected' : '' }} value="latest">Latest</option>
-                          <option {{ request()->get('sort') === 'oldest' ? 'selected' : '' }} value="oldest">Oldest</option>
+                          <option value="">--- Chọn thuộc tính ---</option>
+                          <option {{ request()->get('sort') === 'latest' ? 'selected' : '' }} value="latest">Trễ nhất</option>
+                          <option {{ request()->get('sort') === 'oldest' ? 'selected' : '' }} value="oldest">Sớm nhất</option>
                         </select>
                       </div>
                     </div>

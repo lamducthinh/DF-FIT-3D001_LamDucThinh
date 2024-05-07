@@ -23,6 +23,7 @@
     "dependencies": {
         "@fullcalendar/core": "^6.1.10",
         "@fullcalendar/daygrid": "^6.1.10",
+        "bloodhound": "^1.0.0",
         "bootstrap-icons": "^1.11.3",
         "fullcalendar": "^3.4.0",
         "toastr": "^2.1.4"

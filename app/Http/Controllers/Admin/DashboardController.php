@@ -12,4 +12,5 @@ class DashboardController extends Controller
         $users = User::all();
         return view('admin.AccountOfStaff.register')->with('users',$users);
     }
+    
 }

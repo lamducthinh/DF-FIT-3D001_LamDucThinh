@@ -1,4 +1,4 @@
-@extends('client.layout.master')
+{{-- @extends('client.layout.master')
 
 @section('content')
 <section class="shoping-cart spad">
@@ -172,4 +172,4 @@
            })
         });
     </script>
-@endsection
+@endsection --}}

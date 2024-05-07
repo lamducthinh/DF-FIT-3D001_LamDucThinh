@@ -7,15 +7,18 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckInController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\DashBoardAdminController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\FullCalenderController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\paymentController;
+use App\Http\Controllers\RankController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\service\VNPayService;
 use App\Http\Controllers\ShiftController;
+use App\Http\Controllers\UserCheckInController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -46,7 +49,7 @@ Route::prefix('admin')->middleware('check.is.admin')->name('admin.')->group(func
         Route::post('product/store','store')->name('product.store');
         Route::post('product/slug','createSlug')->name('product.slug');
         Route::post('product/destroy/{id}', 'destroy')->name('product.destroy');
-        
+      
         Route::get('product/detail/{id}', 'detail')->name('product.detail');
         
         Route::post('product/update/{id}', 'update')->name('product.update');
@@ -80,6 +83,8 @@ Route::get('/admin/createAcc/create', function () {
 
 
 
+
+
 Route::prefix('admin')->middleware('check.is.admin')->name('admin.')->group(function(){
     Route::controller(UserController::class)->group(function(){
         Route::get('createAcc/index','index')->name('index.accout');
@@ -87,8 +92,11 @@ Route::prefix('admin')->middleware('check.is.admin')->name('admin.')->group(func
         Route::post('createAcc/update/{id}','update')->name('create.update');
         Route::post('user/destroy/{id}','destroy')->name('user.destroy');
         Route::post('createAcc/store', 'store')->name('store');
+        Route::post('createAcc/force-delete/{id}', 'forceDelete')->name('createAcc.force-delete');
+        Route::post('createAcc/restore/{id}','restore')->name('createAcc.restore');
     });   
 });
+
 Route::prefix('shifts')->middleware('check.is.admin')->name('shifts.')->group(function(){
     Route::controller(ScheduleController::class)->group(function(){
         // Route::get('index','index')->name('index');
@@ -128,13 +136,26 @@ Route::prefix('admin')->name('admin.')->group(function(){
 Route::prefix('shifts')->name('shifts.')->group(function(){
     Route::controller(ScheduleController::class)->group(function(){
         Route::get('index','index')->name('index');
+        Route::get('indexCheckin','indexCheckin')->name('indexCheckin');
     });      
 });
 
-
-/****************************** */
-
-
-Route::get('/feedback',[FeedbackController::class, 'showForm'])->name('feedback-form')  ;
+Route::get('/feedback',[FeedbackController::class, 'showForm'])->name('feedback-form')->middleware('check.is.users')  ;
 Route::post('/feedback',[FeedbackController::class, 'submitFeedback'])->name('submit-feedback');
     
+
+// Route::get('/search', 'ScheduleController@search')->name('users.search');
+
+
+Route::get('staff/checkin', [ScheduleController::class, 'show'])->name('checkin.show');
+Route::post('/checkin', [ScheduleController::class, 'checkIn'])->name('checkin');
+
+Route::post('/checkout', [ScheduleController::class, 'checkOut'])->name('checkout');
+
+// Route::get('/indexCheckin', [ScheduleController::class, 'indexCheckin'])->name('checkin');
+
+Route::get('/users/checkin', [UserCheckInController::class,'checkinList'])->name('users.checkin');
+Route::get('/users/checkout', [UserCheckInController::class,'checkOutList'])->name('users.checkout');
+
+
+
